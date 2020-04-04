@@ -23,7 +23,7 @@ if (!empty($_POST)) {
             //if there is a result, that means that the user was found in the database
             $_SESSION['student_user'] = $input_username;
             $_SESSION['logged_in'] = true;
-            header("Location: home.php");
+            header("Location: ../dashboard/BS3/dashboard.html");
         } else {
             echo "User not found.";
         }
@@ -35,11 +35,11 @@ if (!empty($_POST)) {
 <html lang="en">
 
 <head>
-	<title>Login V6</title>
+	<title>UTEP Grad Tracking Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="images/icons/favicon.ico" />
+	<link rel="icon" type="image/png" href="../common_assets/utep_logo.png" />
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
 	<!--===============================================================================================-->
@@ -67,12 +67,12 @@ if (!empty($_POST)) {
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100 p-t-85 p-b-20">
-				<form class="login100-form validate-form" action="index.php" method="post">
+				<form class="login100-form validate-form" action="login.php" method="post">
 					<span class="login100-form-title p-b-70">
 						Welcome, Miner!
 					</span>
 					<span class="login100-form-avatar">
-						<img src="images/utep_logo.png" alt="AVATAR">
+						<img src="../common_assets/utep_logo.png" alt="AVATAR">
 					</span>
 
 					<div class="wrap-input100 validate-input m-t-85 m-b-35" data-validate="Enter username">
@@ -98,25 +98,24 @@ if (!empty($_POST)) {
 		</div>
 	</div>
 
-<!--
 	<div id="dropDownSelect1"></div>
 
-	===============================================================================================
+	<!-- =============================================================================================== -->
 	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-	===============================================================================================
+	<!-- =============================================================================================== -->
 	<script src="vendor/animsition/js/animsition.min.js"></script>
-	===============================================================================================
+	<!-- =============================================================================================== -->
 	<script src="vendor/bootstrap/js/popper.js"></script>
 	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-	===============================================================================================
+	<!-- =============================================================================================== -->
 	<script src="vendor/select2/select2.min.js"></script>
-	===============================================================================================
+	<!-- =============================================================================================== -->
 	<script src="vendor/daterangepicker/moment.min.js"></script>
 	<script src="vendor/daterangepicker/daterangepicker.js"></script>
-	===============================================================================================
+	<!-- =============================================================================================== -->
 	<script src="vendor/countdowntime/countdowntime.js"></script>
-	===============================================================================================
-	<script src="js/main.js"></script> -->
+	<!-- =============================================================================================== -->
+	<script src="js/main.js"></script>
 
 </body>
 

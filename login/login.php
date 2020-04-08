@@ -16,14 +16,24 @@ if (!empty($_POST)) {
         $input_username = isset($_POST['username']) ? $_POST['username'] : " ";
         $input_password = isset($_POST['password']) ? $_POST['password'] : " ";
 
-        $queryStudent = "SELECT * FROM Student  WHERE U_username='" . $input_username . "' AND U_Password='" . $input_password . "';";
-        $resultStudent = $conn->query($queryStudent);
+        $queryUser = "SELECT * FROM user  WHERE U_email='" . $input_username . "' AND U_Password='" . $input_password . "';";
+        $resultUser = $conn->query($queryUser);
 
-        if ($resultStudent->num_rows > 0) {
+        if ($resultUser->num_rows > 0) {
             //if there is a result, that means that the user was found in the database
-            $_SESSION['student_user'] = $input_username;
-            $_SESSION['logged_in'] = true;
-            header("Location: ../dashboard/BS3/dashboard.html");
+            $queryAdmin = "SELECT * FROM faculty WHERE u_email='" . $input_username . "';";
+            $resultAdmin = $conn->query($queryAdmin);
+            // echo $queryAdmin;
+            if ($resultAdmin->num_rows > 0) {
+                $_SESSION['admin_user'] = $input_username;
+                $_SESSION['logged_in'] = true;
+                header("Location: ../admin_dashboard/BS3/dashboard.html");
+            } else {
+                $_SESSION['student_user'] = $input_username;
+                $_SESSION['logged_in'] = true;
+                header("Location: ../dashboard/BS3/dashboard.html");
+            }
+
         } else {
             echo "User not found.";
         }

@@ -8,7 +8,7 @@
  */
 
 session_start();
-require_once "../config.php";
+require_once "../common_assets/config.php";
 $_SESSION['logged_in'] = false;
 
 if (!empty($_POST)) {
@@ -25,13 +25,13 @@ if (!empty($_POST)) {
             $resultAdmin = $conn->query($queryAdmin);
             // echo $queryAdmin;
             if ($resultAdmin->num_rows > 0) {
-                $_SESSION['admin_user'] = $input_username;
+                $_SESSION['username'] = $input_username;
                 $_SESSION['logged_in'] = true;
-                header("Location: ../admin_dashboard/BS3/dashboard.html");
+                header("Location: ../admin_dashboard/BS3/dashboard.php");
             } else {
-                $_SESSION['student_user'] = $input_username;
+                $_SESSION['username'] = $input_username;
                 $_SESSION['logged_in'] = true;
-                header("Location: ../dashboard/BS3/dashboard.html");
+                header("Location: ../dashboard/BS3/dashboard.php");
             }
 
         } else {

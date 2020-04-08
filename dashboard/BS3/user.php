@@ -1,3 +1,18 @@
+<?php
+session_start();
+require_once "../../common_assets/config.php";
+$username = $_SESSION['username'];
+
+// $fname_query = "select u_fname from user where u_email='" . $username . "';";
+// $fname_res = $conn->query($fname_query);
+
+// $fname = $fname_res->fetch_assoc()['u_fname'];
+
+// $lname_query = "select u_fname from user where u_email='" . $username . "';";
+// $lname_res = $conn->query($lname_query)->fetch_assoc();
+// $fname = $fname_res['u_lname'];
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -207,16 +222,16 @@
                                             </div> -->
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label>Username</label>
-                                                    <input type="text" class="form-control" placeholder="Username"
-                                                        value="michael23" disabled>
+                                                    <label>username</label>
+                                                    <input type="text" class="form-control"
+                                                        value="<?=$username?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="exampleInputEmail1">Email address</label>
                                                     <input type="email" class="form-control"
-                                                        value="michael23@miners.utep.edu">
+                                                        value="<?=$username?>@miners.utep.edu">
                                                 </div>
                                             </div>
                                         </div>
@@ -226,7 +241,7 @@
                                                 <div class="form-group">
                                                     <label>First Name</label>
                                                     <input type="text" class="form-control" placeholder="Company"
-                                                        value="Mike" disabled>
+                                                    value="<?=$fname?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">

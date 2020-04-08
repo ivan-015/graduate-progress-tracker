@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!doctype html>
 <html lang="en">
 
@@ -6,7 +9,7 @@
     <link rel="icon" type="image/png" href="../../common_assets/utep_logo.png">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-    <title>Dashboard Home</title>
+    <title>Dashboard Home </title>
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
@@ -47,20 +50,20 @@
 
             <div class="sidebar-wrapper">
                 <div class="logo">
-                    <a href="dashboard.html" class="simple-text">
-                        Student Dashboard
+                    <a href="dashboard.php" class="simple-text">
+                        Student Dashboard "<?=$var?>"
                     </a>
                 </div>
 
                 <ul class="nav">
                     <li class="active">
-                        <a href="dashboard.html">
+                        <a href="dashboard.php">
                             <i class="pe-7s-graph"></i>
                             <p>Dashboard</p>
                         </a>
                     </li>
                     <li>
-                        <a href="user.html">
+                        <a href="user.php">
                             <i class="pe-7s-user"></i>
                             <p>User Profile</p>
                         </a>

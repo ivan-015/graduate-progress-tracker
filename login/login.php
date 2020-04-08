@@ -27,7 +27,7 @@ if (!empty($_POST)) {
             if ($resultAdmin->num_rows > 0) {
                 $_SESSION['username'] = $input_username;
                 $_SESSION['logged_in'] = true;
-                header("Location: ../admin_dashboard/BS3/dashboard.php");
+                header("Location: ../admin_dashboard/BS3/dashboard.html");
             } else {
                 $_SESSION['username'] = $input_username;
                 $_SESSION['logged_in'] = true;

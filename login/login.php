@@ -8,7 +8,7 @@
  */
 
 session_start();
-require_once "../common_assets/config.php";
+require_once ("../common_assets/config.php");
 $_SESSION['logged_in'] = false;
 
 if (!empty($_POST)) {

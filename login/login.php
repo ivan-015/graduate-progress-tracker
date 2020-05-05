@@ -25,9 +25,9 @@ if (!empty($_POST)) {
             $resultAdmin = $conn->query($queryAdmin);
             // echo $queryAdmin;
             if ($resultAdmin->num_rows > 0) {
-                $_SESSION['username'] = $input_username;
+				$_SESSION['username'] = $input_username;
                 $_SESSION['logged_in'] = true;
-                header("Location: ../admin_dashboard/BS3/dashboard.html");
+                header("Location: ../admin_dashboard/BS3/dashboard.php");
             } else {
                 $_SESSION['username'] = $input_username;
                 $_SESSION['logged_in'] = true;

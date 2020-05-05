@@ -1,3 +1,37 @@
+<?php 
+    session_start();
+    require_once("../../common_assets/config.php");
+
+    $template_query_start = "UPDATE User SET ";
+    $template_query_end = " WHERE u_email = '";
+
+    $faculty_template_query_start = "UPDATE Faculty SET ";
+    $faculty_template_query_end = " WHERE u_email = '";
+    if(isset($_POST['email']) && $_POST['email'] != ''){
+        $old_user = $_SESSION['username'];
+        $conn->query($template_query_start . "u_email = '" . $_POST['email'] . "' " . $template_query_end . $old_user . "'");
+        $conn->query($faculty_template_query_start . "u_email = '" . $_POST['email'] . "' " . $template_query_end .$old_user . "'");
+        $_SESSION['username'] = $_POST['email'];
+    }
+    if(isset($_POST['f_name']) && $_POST['f_name'] != ''){
+        $conn->query($template_query_start . "u_fname = '" . $_POST['f_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+    }
+    if(isset($_POST['m_name']) && $_POST['m_name'] != ''){
+        $conn->query($template_query_start . "u_mname = '" . $_POST['m_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+    }
+    if(isset($_POST['l_name']) && $_POST['l_name'] != ''){
+        $conn->query($template_query_start . "u_lname = '" . $_POST['l_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+    }
+    if(isset($_POST['password']) && $_POST['password'] != ''){
+        $conn->query($template_query_start . "u_password = '" . $_POST['password'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+    }
+
+    $admin_res = $conn->query("SELECT * FROM User JOIN Faculty WHERE User.u_email = Faculty.u_email AND User.u_email = " . "'".$_SESSION['username'] . "'");
+    $row = $admin_res->fetch_assoc();
+
+   
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -46,20 +80,20 @@
 
             <div class="sidebar-wrapper">
                 <div class="logo">
-                    <a href="dashboard.html" class="simple-text">
+                    <a href="dashboard.php" class="simple-text">
                         Admin Dashboard
                     </a>
                 </div>
 
                 <ul class="nav">
                     <li>
-                        <a href="dashboard.html">
+                        <a href="dashboard.php">
                             <i class="pe-7s-graph"></i>
                             <p>Dashboard</p>
                         </a>
                     </li>
                     <li class="active">
-                        <a href="user.html">
+                        <a href="user.php">
                             <i class="pe-7s-user"></i>
                             <p>User Profile</p>
                         </a>
@@ -196,7 +230,7 @@
                                     <h4 class="title">Edit Profile</h4>
                                 </div>
                                 <div class="content">
-                                    <form>
+                                    <form method="POST" action="">
                                         <div class="row">
                                             <!-- <div class="col-md-5">
                                                 <div class="form-group">
@@ -205,17 +239,17 @@
                                                         placeholder="Company" value="Creative Code Inc.">
                                                 </div>
                                             </div> -->
-                                            <div class="col-md-3">
+                                            <!-- <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Username</label>
                                                     <input type="text" class="form-control" placeholder="Username"
                                                         value="michael23">
                                                 </div>
-                                            </div>
-                                            <div class="col-md-4">
+                                            </div> -->
+                                            <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="exampleInputEmail1">Email address</label>
-                                                    <input type="email" class="form-control" value="michael23@utep.edu">
+                                                    <label for="exampleInputEmail1">Email</label>
+                                                    <input name="email" type="text" class="form-control" <?php echo "value=" . $_SESSION['username'];?>>
                                                 </div>
                                             </div>
                                         </div>
@@ -224,20 +258,28 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>First Name</label>
-                                                    <input type="text" class="form-control" placeholder="Company"
-                                                        value="Mike">
+                                                    <input name="f_name" type="text" class="form-control" placeholder="Company"
+                                                        <?php echo "value=" . $row['u_fname']; ?>
+                                                        >
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Middle Name</label>
+                                                    <input name="m_name" type="text" class="form-control" placeholder="Enter Middle Name Here"
+                                                    <?php echo "value=" . $row['u_mname']; ?>>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Last Name</label>
-                                                    <input type="text" class="form-control" placeholder="Last Name"
-                                                        value="Andrew">
+                                                    <input name="l_name" type="text" class="form-control" placeholder="Last Name"
+                                                    <?php echo "value=" . $row['u_lname']; ?>>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="row">
+                                        <!-- <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>Address</label>
@@ -245,7 +287,7 @@
                                                         value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09">
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <!-- <div class="row">
                                             <div class="col-md-4">
@@ -270,7 +312,7 @@
                                             </div>
                                         </div> -->
 
-                                        <div class="row">
+                                        <!-- <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>About Me</label>
@@ -279,7 +321,7 @@
                                                         value="Mike">Hello, my name is User. I am a PhD Student at the University of Texas at El Paso.</textarea>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <button type="submit" class="btn btn-info btn-fill pull-right">Update
                                             Profile</button>
@@ -300,8 +342,8 @@
                                             <img class="avatar border-gray" src="assets/img/faces/face-3.jpg"
                                                 alt="..." />
 
-                                            <h4 class="title">Mike Andrew<br />
-                                                <small>michael23</small>
+                                            <h4 class="title"><?php echo $row['u_fname'] . " " . $row['u_mname'] . " " . $row['u_lname']; ?><br />
+                                                <small><?php echo $row['u_id']; ?></small>
                                             </h4>
                                         </a>
                                     </div>

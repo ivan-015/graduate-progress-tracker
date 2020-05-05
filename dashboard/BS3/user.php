@@ -1,16 +1,35 @@
 <?php
 session_start();
-require_once "../../common_assets/config.php";
+require_once("../../common_assets/config.php");
 $username = $_SESSION['username'];
 
-// $fname_query = "select u_fname from user where u_email='" . $username . "';";
-// $fname_res = $conn->query($fname_query);
+$template_query_start = "UPDATE User SET ";
+$template_query_end = " WHERE u_email = '";
 
-// $fname = $fname_res->fetch_assoc()['u_fname'];
+$faculty_template_query_start = "UPDATE STUDENT SET ";
+$faculty_template_query_end = " WHERE u_email = '";
+if (isset($_POST['email']) && $_POST['email'] != '') {
+    $old_user = $_SESSION['username'];
+    $conn->query($template_query_start . "u_email = '" . $_POST['email'] . "' " . $template_query_end . $old_user . "'");
+    $conn->query($faculty_template_query_start . "u_email = '" . $_POST['email'] . "' " . $template_query_end . $old_user . "'");
+    $_SESSION['username'] = $_POST['email'];
+    $username = $_SESSION['username'];
+}
+// if(isset($_POST['f_name']) && $_POST['f_name'] != ''){
+//     $conn->query($template_query_start . "u_fname = '" . $_POST['f_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+// }
+// if(isset($_POST['m_name']) && $_POST['m_name'] != ''){
+//     $conn->query($template_query_start . "u_mname = '" . $_POST['m_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+// }
+// if(isset($_POST['l_name']) && $_POST['l_name'] != ''){
+//     $conn->query($template_query_start . "u_lname = '" . $_POST['l_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+// }
+// if(isset($_POST['password']) && $_POST['password'] != ''){
+//     $conn->query($template_query_start . "u_password = '" . $_POST['password'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+// }
+$student_res = $conn->query("SELECT * FROM User JOIN Student WHERE User.u_id = Student.u_id AND User.u_email = " . "'" . $_SESSION['username'] . "'");
+$row = $student_res->fetch_assoc();
 
-// $lname_query = "select u_fname from user where u_email='" . $username . "';";
-// $lname_res = $conn->query($lname_query)->fetch_assoc();
-// $fname = $fname_res['u_lname'];
 ?>
 
 <!doctype html>
@@ -211,8 +230,8 @@ $username = $_SESSION['username'];
                                     <h4 class="title">Edit Profile</h4>
                                 </div>
                                 <div class="content">
-                                    <form>
-                                        <div class="row">
+                                    <form method = "POST">
+                                    <div class="row">
                                             <!-- <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label>Company (disabled)</label>
@@ -220,18 +239,17 @@ $username = $_SESSION['username'];
                                                         placeholder="Company" value="Creative Code Inc.">
                                                 </div>
                                             </div> -->
-                                            <div class="col-md-3">
+                                            <!-- <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label>username</label>
-                                                    <input type="text" class="form-control"
-                                                        value="<?=$username?>" disabled>
+                                                    <label>Username</label>
+                                                    <input type="text" class="form-control" placeholder="Username"
+                                                        value="michael23">
                                                 </div>
-                                            </div>
-                                            <div class="col-md-4">
+                                            </div> -->
+                                            <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="exampleInputEmail1">Email address</label>
-                                                    <input type="email" class="form-control"
-                                                        value="<?=$username?>@miners.utep.edu">
+                                                    <label for="exampleInputEmail1">Email</label>
+                                                    <input name="email" type="text" class="form-control" <?php echo "value=" . $_SESSION['username']; ?> disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -240,20 +258,25 @@ $username = $_SESSION['username'];
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>First Name</label>
-                                                    <input type="text" class="form-control" placeholder="Company"
-                                                    value="<?=$fname?>" disabled>
+                                                    <input name="f_name" type="text" class="form-control"  <?php echo "value=" . $row['u_fname']; ?> disabled>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Middle Name</label>
+                                                    <input name="m_name" type="text" class="form-control" placeholder="Enter Middle Name Here"<?php echo "value=" . ($row['u_mname'] == NULL ? "_" : $row['u_mname']); ?> disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Last Name</label>
-                                                    <input type="text" class="form-control" placeholder="Last Name"
-                                                        value="Andrew" disabled>
+                                                    <input name="l_name" type="text" class="form-control" placeholder="Last Name"
+                                                    <?php echo "value=" . $row['u_lname']; ?> disabled>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="row">
+                                        <!-- <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>Address</label>
@@ -261,7 +284,7 @@ $username = $_SESSION['username'];
                                                         value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09">
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <!-- <div class="row">
                                             <div class="col-md-4">
@@ -286,7 +309,7 @@ $username = $_SESSION['username'];
                                             </div>
                                         </div> -->
 
-                                        <div class="row">
+                                        <!-- <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>About Me</label>
@@ -295,7 +318,7 @@ $username = $_SESSION['username'];
                                                         value="Mike">Hello, my name is User. I am a PhD Student at the University of Texas at El Paso.</textarea>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <button type="submit" class="btn btn-info btn-fill pull-right">Update
                                             Profile</button>
@@ -316,15 +339,15 @@ $username = $_SESSION['username'];
                                             <img class="avatar border-gray" src="assets/img/faces/face-3.jpg"
                                                 alt="..." />
 
-                                            <h4 class="title">Mike Andrew<br />
-                                                <small>michael23</small>
+                                            <h4 class="title"><?php echo $row['u_fname'] . " " . $row['u_lname'];?><br />
+                                                <small><?php echo $_SESSION['username'];?></small>
                                             </h4>
                                         </a>
                                     </div>
-                                    <p class="description text-center"> Major GPA: 3.9<br>
-                                        Overall GPA: 3.6<br>
-                                        Graduation date: May 2020<br>
-                                        Credit hours: 120
+                                    <p class="description text-center"> Major GPA: <?php echo $row['s_major_gpa']?><br>
+                                        Overall GPA: <?php echo $row['s_gpa']?><br>
+                                        Graduation date: <?php echo $row['s_gradaute_date']?><br>
+                                        Credit hours: <?php echo $row['s_credit_hours']?>
                                     </p>
                                 </div>
                                 <hr>

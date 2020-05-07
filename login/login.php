@@ -9,7 +9,7 @@
 
 session_start();
 require_once ("../common_assets/config.php");
-$_SESSION['logged_in'] = false;
+$_SESSION['logged_in'] = false;/*
 $username = $password = $err = "";
 if($_SERVER['REQUEST_METHOD']=='POST'){
 	if(empty(trim($_POST['username']))){
@@ -93,38 +93,47 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 
     mysqli_close($link);
 }
+*/
 
-/*
 if (!empty($_POST)) {
     if (isset($_POST['Submit'])) {
         $input_username = isset($_POST['username']) ? $_POST['username'] : " ";
         $input_password = isset($_POST['password']) ? $_POST['password'] : " ";
 		/*
 		 * Hashing and Salting goes here.
-		 *
-        $queryUser = "SELECT * FROM user  WHERE U_email='" . $input_username . "' AND U_Password='" . $input_password . "';";
-        $resultUser = $conn->query($queryUser);
+		 */
+        $queryUser = "SELECT * FROM user  WHERE U_email=?" ;
+		mysqli_stmt_bind_param($queryUser, 's', $input_username);
+		mysqli_stmt_execute($queryUser);
+		$result_for_pwd = mysqli_stmt_get_result($queryUser);
+		$resultUser = $conn->query($queryUser);
 
         if ($resultUser->num_rows > 0) {
-            //if there is a result, that means that the user was found in the database
-            $queryAdmin = "SELECT * FROM faculty WHERE u_email='" . $input_username . "';";
-            $resultAdmin = $conn->query($queryAdmin);
-            // echo $queryAdmin;
-            if ($resultAdmin->num_rows > 0) {
-                $_SESSION['username'] = $input_username;
-                $_SESSION['logged_in'] = true;
-                header("Location: ../admin_dashboard/BS3/dashboard.html");
-            } else {
-                $_SESSION['username'] = $input_username;
-                $_SESSION['logged_in'] = true;
-                header("Location: ../dashboard/BS3/dashboard.php");
-            }
+			//$test = $resultUser->password_verify($input_password, );
+			//$if_password_correct = 
+			if(password_verify($input_password, $resultUser['u_password'])){
+				//if there is a result, that means that the user was found in the database
+				$queryAdmin = "SELECT * FROM faculty WHERE u_email='" . $input_username . "';";
+				$resultAdmin = $conn->query($queryAdmin);
+				// echo $queryAdmin;
+				if ($resultAdmin->num_rows > 0) {
+					$_SESSION['username'] = $input_username;
+					$_SESSION['logged_in'] = true;
+					header("Location: ../admin_dashboard/BS3/dashboard.html");
+				} else {
+					$_SESSION['username'] = $input_username;
+					$_SESSION['logged_in'] = true;
+					header("Location: ../dashboard/BS3/dashboard.php");
+				}
+			} else{
+				echo "Password Incorrect";
+			}
 
         } else {
             echo "User not found.";
         }
     }
-}*/
+}
 ?>
 
 <!DOCTYPE html>

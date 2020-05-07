@@ -191,7 +191,7 @@ $username = $_SESSION['username'];
                                 </ul>
                             </li> -->
                             <li>
-                                <a href="../../login/login.php">
+                                <a href="../../login/logout.php">
                                     <p>Log out</p>
                                 </a>
                             </li>

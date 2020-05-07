@@ -105,7 +105,7 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li>
-                                <a href="../../login/login.php">
+                                <a href="../../login/logout.php">
                                     <p>Log out</p>
                                 </a>
                             </li>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("../../common_assets/config.php");
+require_once "../../common_assets/config.php";
 $username = $_SESSION['username'];
 
 $template_query_start = "UPDATE User SET ";
@@ -29,7 +29,19 @@ if (isset($_POST['email']) && $_POST['email'] != '') {
 // }
 $student_res = $conn->query("SELECT * FROM User JOIN Student WHERE User.u_id = Student.u_id AND User.u_email = " . "'" . $_SESSION['username'] . "'");
 $row = $student_res->fetch_assoc();
+$id = $row['u_id'];
 
+//Update user image
+if (count($_FILES) > 0) {
+    if (is_uploaded_file($_FILES['userImage']['tmp_name'])) {
+        $imgData = addslashes(file_get_contents($_FILES['userImage']['tmp_name']));
+        $imageProperties = getimageSize($_FILES['userImage']['tmp_name']);
+        
+
+        $query = "UPDATE userimages SET i_type = '{$imageProperties['mime']}', i_data = '{$imgData}' WHERE userimages.u_id = $id";
+        $current_id = $conn->query($query) or die("<b>Error:</b> Problem on Image Insert<br/>" . mysqli_error($conn));
+    }
+}
 ?>
 
 <!doctype html>
@@ -264,7 +276,7 @@ $row = $student_res->fetch_assoc();
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Middle Name</label>
-                                                    <input name="m_name" type="text" class="form-control" placeholder="Enter Middle Name Here"<?php echo "value=" . ($row['u_mname'] == NULL ? "_" : $row['u_mname']); ?> disabled>
+                                                    <input name="m_name" type="text" class="form-control" placeholder="Enter Middle Name Here"<?php echo "value=" . ($row['u_mname'] == null ? "_" : $row['u_mname']); ?> disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -322,8 +334,15 @@ $row = $student_res->fetch_assoc();
 
                                         <button type="submit" class="btn btn-info btn-fill pull-right">Update
                                             Profile</button>
+                                        
                                         <div class="clearfix"></div>
                                     </form>
+                                    <form name="frmImage" enctype="multipart/form-data" action=""
+                                                method="post" class="frmImageUpload">
+                                                <label>Upload Profile Picture:</label><br /> <input name="userImage"
+                                                    type="file" class="inputFile" /> <input type="submit"
+                                                    value="Submit" class="btnSubmit" />
+                                    </form> 
                                 </div>
                             </div>
                         </div>
@@ -336,18 +355,18 @@ $row = $student_res->fetch_assoc();
                                 <div class="content">
                                     <div class="author">
                                         <a href="#">
-                                            <img class="avatar border-gray" src="assets/img/faces/face-3.jpg"
+                                        <img class="avatar border-gray" src="../../common_assets/avatar.php?u_id=<?php echo $id; ?>"
                                                 alt="..." />
 
-                                            <h4 class="title"><?php echo $row['u_fname'] . " " . $row['u_lname'];?><br />
-                                                <small><?php echo $_SESSION['username'];?></small>
+                                            <h4 class="title"><?php echo $row['u_fname'] . " " . $row['u_lname']; ?><br />
+                                                <small><?php echo $_SESSION['username']; ?></small>
                                             </h4>
                                         </a>
                                     </div>
-                                    <p class="description text-center"> Major GPA: <?php echo $row['s_major_gpa']?><br>
-                                        Overall GPA: <?php echo $row['s_gpa']?><br>
-                                        Graduation date: <?php echo $row['s_gradaute_date']?><br>
-                                        Credit hours: <?php echo $row['s_credit_hours']?>
+                                    <p class="description text-center"> Major GPA: <?php echo $row['s_major_gpa'] ?><br>
+                                        Overall GPA: <?php echo $row['s_gpa'] ?><br>
+                                        Graduation date: <?php echo $row['s_gradaute_date'] ?><br>
+                                        Credit hours: <?php echo $row['s_credit_hours'] ?>
                                     </p>
                                 </div>
                                 <hr>

@@ -1,35 +1,46 @@
-<?php 
-    session_start();
-    require_once("../../common_assets/config.php");
+<?php
+session_start();
+require_once "../../common_assets/config.php";
 
-    $template_query_start = "UPDATE User SET ";
-    $template_query_end = " WHERE u_email = '";
+$template_query_start = "UPDATE User SET ";
+$template_query_end = " WHERE u_email = '";
 
-    $faculty_template_query_start = "UPDATE Faculty SET ";
-    $faculty_template_query_end = " WHERE u_email = '";
-    if(isset($_POST['email']) && $_POST['email'] != ''){
-        $old_user = $_SESSION['username'];
-        $conn->query($template_query_start . "u_email = '" . $_POST['email'] . "' " . $template_query_end . $old_user . "'");
-        $conn->query($faculty_template_query_start . "u_email = '" . $_POST['email'] . "' " . $template_query_end .$old_user . "'");
-        $_SESSION['username'] = $_POST['email'];
-    }
-    if(isset($_POST['f_name']) && $_POST['f_name'] != ''){
-        $conn->query($template_query_start . "u_fname = '" . $_POST['f_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
-    }
-    if(isset($_POST['m_name']) && $_POST['m_name'] != ''){
-        $conn->query($template_query_start . "u_mname = '" . $_POST['m_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
-    }
-    if(isset($_POST['l_name']) && $_POST['l_name'] != ''){
-        $conn->query($template_query_start . "u_lname = '" . $_POST['l_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
-    }
-    if(isset($_POST['password']) && $_POST['password'] != ''){
-        $conn->query($template_query_start . "u_password = '" . $_POST['password'] . "' " . $template_query_end . $_SESSION['username'] . "'");
-    }
+$faculty_template_query_start = "UPDATE Faculty SET ";
+$faculty_template_query_end = " WHERE u_email = '";
+if (isset($_POST['email']) && $_POST['email'] != '') {
+    $old_user = $_SESSION['username'];
+    $conn->query($template_query_start . "u_email = '" . $_POST['email'] . "' " . $template_query_end . $old_user . "'");
+    $conn->query($faculty_template_query_start . "u_email = '" . $_POST['email'] . "' " . $template_query_end . $old_user . "'");
+    $_SESSION['username'] = $_POST['email'];
+}
+if (isset($_POST['f_name']) && $_POST['f_name'] != '') {
+    $conn->query($template_query_start . "u_fname = '" . $_POST['f_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+}
+if (isset($_POST['m_name']) && $_POST['m_name'] != '') {
+    $conn->query($template_query_start . "u_mname = '" . $_POST['m_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+}
+if (isset($_POST['l_name']) && $_POST['l_name'] != '') {
+    $conn->query($template_query_start . "u_lname = '" . $_POST['l_name'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+}
+if (isset($_POST['password']) && $_POST['password'] != '') {
+    $conn->query($template_query_start . "u_password = '" . $_POST['password'] . "' " . $template_query_end . $_SESSION['username'] . "'");
+}
 
-    $admin_res = $conn->query("SELECT * FROM User JOIN Faculty WHERE User.u_email = Faculty.u_email AND User.u_email = " . "'".$_SESSION['username'] . "'");
-    $row = $admin_res->fetch_assoc();
+$admin_res = $conn->query("SELECT * FROM User JOIN Faculty WHERE User.u_email = Faculty.u_email AND User.u_email = " . "'" . $_SESSION['username'] . "'");
+$row = $admin_res->fetch_assoc();
+$id = $row['u_id'];
 
-   
+//Update user image
+if (count($_FILES) > 0) {
+    if (is_uploaded_file($_FILES['userImage']['tmp_name'])) {
+        $imgData = addslashes(file_get_contents($_FILES['userImage']['tmp_name']));
+        $imageProperties = getimageSize($_FILES['userImage']['tmp_name']);
+
+        $query = "UPDATE userimages SET i_type = '{$imageProperties['mime']}', i_data = '{$imgData}' WHERE userimages.u_id = $id";
+        $current_id = $conn->query($query) or die("<b>Error:</b> Problem on Image Insert<br/>" . mysqli_error($conn));
+    }
+}
+
 ?>
 
 <!doctype html>
@@ -159,7 +170,7 @@
                                     <p class="hidden-lg hidden-md">Dashboard</p>
                                 </a>
                             </li> -->
-                       
+
                             <!-- <li>
                                 <a href="">
                                     <i class="fa fa-search"></i>
@@ -232,7 +243,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="exampleInputEmail1">Email</label>
-                                                    <input name="email" type="text" class="form-control" <?php echo "value=" . $_SESSION['username'];?>>
+                                                    <input name="email" type="text" class="form-control" <?php echo "value=" . $_SESSION['username']; ?>>
                                                 </div>
                                             </div>
                                         </div>
@@ -310,6 +321,12 @@
                                             Profile</button>
                                         <div class="clearfix"></div>
                                     </form>
+                                    <form name="frmImage" enctype="multipart/form-data" action=""
+                                                method="post" class="frmImageUpload">
+                                                <label>Upload Profile Picture:</label><br /> <input name="userImage"
+                                                    type="file" class="inputFile" /> <input type="submit"
+                                                    value="Submit" class="btnSubmit" />
+                                    </form> 
                                 </div>
                             </div>
                         </div>
@@ -322,7 +339,7 @@
                                 <div class="content">
                                     <div class="author">
                                         <a href="#">
-                                            <img class="avatar border-gray" src="assets/img/faces/face-3.jpg"
+                                        <img class="avatar border-gray" src="../../common_assets/avatar.php?u_id=<?php echo $id; ?>"
                                                 alt="..." />
 
                                             <h4 class="title"><?php echo $row['u_fname'] . " " . $row['u_mname'] . " " . $row['u_lname']; ?><br />

@@ -258,7 +258,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>First Name</label>
-                                                    <input name="f_name" type="text" class="form-control" placeholder="Company"
+                                                    <input name="f_name" type="text" class="form-control" placeholder="First Name"
                                                         <?php echo "value=" . $row['u_fname']; ?>
                                                         >
                                                 </div>
@@ -266,7 +266,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Middle Name</label>
-                                                    <input name="m_name" type="text" class="form-control" placeholder="Enter Middle Name Here"
+                                                    <input name="m_name" type="text" class="form-control" placeholder="Middle Name"
                                                     <?php echo "value=" . $row['u_mname']; ?>>
                                                 </div>
                                             </div>

@@ -2,10 +2,24 @@
     session_start();
     require_once "../../common_assets/config.php";
 
+    $template_query_start = "UPDATE User SET ";
+    $template_query_end = " WHERE u_email = '";
     // Remove student
     if(isset($_POST['remove_user'])){
         $conn->query("DELETE FROM Student WHERE Student.u_id = '" . $_POST['remove_user'] . "'");
         $conn->query("DELETE FROM User WHERE User.u_id = '" . $_POST['remove_user'] . "'");
+    }
+
+    if(isset($_POST['update_user'])){
+        if(isset($_POST['fname']) && $_POST['fname'] != ''){
+            $conn->query($template_query_start . "u_fname = '" . $_POST['fname'] . "' " . $template_query_end . $_POST['update_user'] . "'");
+        }
+        if(isset($_POST['mname']) && $_POST['mname'] != ''){
+            $conn->query($template_query_start . "u_mname = '" . $_POST['mname'] . "' " . $template_query_end . $_POST['update_user'] . "'");
+        }
+        if(isset($_POST['lname']) && $_POST['lname'] != ''){
+            $conn->query($template_query_start . "u_lname = '" . $_POST['lname'] . "' " . $template_query_end . $_POST['update_user'] . "'");
+        }
     }
 
     $user_name = $_SESSION['username'];
@@ -131,33 +145,49 @@
                                     <table class="table table-hover table-striped">
                                         <thead>
                                             <th>ID</th>
-                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>First Name</th>
+                                            <th>Middle Name</th>
+                                            <th>Last Name</th>
                                             <th>Classification</th>
                                             <th></th>
                                             <!-- <th>Link</th> -->
                                         </thead>
-                                        <tbody>
-                                            <?php
-                                                while ($rows = $r_students->fetch_assoc()) {
-                                                    $s_id = $rows['u_id'];
-                                                    $s_name = $rows['u_fname'] . " " . $rows['u_lname'];
-                                                    $s_class = $rows['s_is_doctorate_student'] > 0 ? "Doctorate student" : "Master Student";
-                                                    echo "
-                                                    <tr>
-                                                    <td>$s_id</td>
-                                                    <td>$s_name</td>
-                                                    <td>$s_class</td>
-                                                    <td>
-                                                        <form action=\"\" method=\"post\">
-                                                            <button type=\"submit\" class=\"button\" name=\"remove_user\" value= \"" . $s_id . "\"> Remove User </button>
-                                                        </form>
-                                                    </td>
-                                                    </tr>
-                                                    ";
-                                                }
-                                            ?>
+                                        <form method="POST" action="">
 
+                                        <tbody>
+                                                <?php
+                                                    while ($rows = $r_students->fetch_assoc()) {
+                                                        $s_id = $rows['u_id'];
+                                                        $s_email = $rows['u_email'];
+                                                        $s_name = $rows['u_fname'] . " " . $rows['u_lname'];
+                                                        $s_class = $rows['s_is_doctorate_student'] > 0 ? "Doctorate student" : "Master Student";
+                                                        echo "
+                                                        <tr>
+                                                        <td>$s_id</td>
+                                                        <th>$s_email</th>
+                                                        <td> <div class=\"form-group\"><input name=\"fname\" class=\"form-control\" type=\"text\" class=\"form-control\" placeholder=\"" . $rows['u_fname'] . "\"></div></td>
+                                                        <td><input name=\"mname\" type=\"text\" class=\"form-control\" placeholder=\"" . $rows['u_mname'] . "\"></td>
+                                                        <td><input name=\"lname\" type=\"text\" class=\"form-control\" placeholder=\"" . $rows['u_lname'] . "\"></td>
+                                                        <td>$s_class</td>
+                                                        <td>
+                                                            <form action=\"\" method=\"post\">  
+                                                                <button  name=\"update_user\" type=\"submit\" class=\"button\" placeholder= " . $s_email . " value= " . $s_email . "> Update User </button>
+                                                            </form>
+                                                        </td>
+                                                        <td>
+                                                            <form action=\"\" method=\"post\">
+                                                                <button type=\"submit\" class=\"button\" name=\"remove_user\" placeholder= " . $s_email . " value= " . $s_email ." > Remove User </button>
+                                                            </form>
+                                                        </td>
+                                                        
+                                                        </tr>
+                                                        ";
+                                                    }
+                                                ?>
                                         </tbody>
+                                        </form>
+
                                     </table>
 
                                 </div>

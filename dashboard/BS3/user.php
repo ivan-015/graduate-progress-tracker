@@ -99,13 +99,13 @@ $row = $student_res->fetch_assoc();
                         </a>
                     </li>
                     <li>
-                        <a href="portfolio.html">
+                        <a href="portfolio.php">
                             <i class="pe-7s-note2"></i>
                             <p>Portfolio</p>
                         </a>
                     </li>
                     <li>
-                        <a href="documents.html">
+                        <a href="documents.php">
                             <i class="pe-7s-news-paper"></i>
                             <p>Documents</p>
                         </a>

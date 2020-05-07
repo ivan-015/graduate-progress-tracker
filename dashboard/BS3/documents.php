@@ -1,3 +1,11 @@
+<?php 
+    session_start();
+    require_once("../../common_assets/config.php");
+
+    $proposals = $conn->query("SELECT * FROM User JOIN Proposals WHERE User.u_id = Proposals.u_id AND User.u_email = " . "'" . $_SESSION['username'] . "'");
+    $comments = $conn->query("SELECT * FROM User JOIN Comments WHERE User.u_id = Comments.u_id AND User.u_email = " . "'" . $_SESSION['username'] . "'");
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -65,7 +73,7 @@ Tip 2: you can also add an image using data-image tag
                         </a>
                     </li>
                     <li>
-                        <a href="portfolio.html">
+                        <a href="portfolio.php">
                             <i class="pe-7s-note2"></i>
                             <p>Portfolio</p>
                         </a>
@@ -191,11 +199,10 @@ Tip 2: you can also add an image using data-image tag
                 <div class="container-fluid">
                     <div class="row">
 
-                        <div class="col-md-12">
+                        <!-- <div class="col-md-12">
                             <div class="card">
                                 <div class="header">
                                     <h4 class="title">Advising notes</h4>
-                                    <!-- <p class="category">Created using Roboto Font Family</p> -->
                                 </div>
                                 <div class="content table-responsive table-full-width">
                                     <table class="table table-hover table-striped">
@@ -203,7 +210,6 @@ Tip 2: you can also add an image using data-image tag
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Description</th>
-                                            <!-- <th>Link</th> -->
                                         </thead>
                                         <tbody>
                                             <tr>
@@ -222,7 +228,7 @@ Tip 2: you can also add an image using data-image tag
 
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="col-md-12">
                             <div class="card">
@@ -239,17 +245,31 @@ Tip 2: you can also add an image using data-image tag
                                             <!-- <th>Link</th> -->
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td><a href="http://writing.engr.psu.edu/workbooks/proposal.samples.html"
-                                                        target="_blank">1</a></td>
-                                                <td>Proposal 1</td>
-                                                <td>first research proposal</td>
-                                            </tr>
-                                            <tr>
-                                                <td><a href="https://google.com" target="_blank">2</a></td>
-                                                <td>Proposal 2</td>
-                                                <td>Second research proposal</td>
-                                            </tr>
+                                        <?php
+                                                $i = 1;
+                                                while ($rows = $proposals->fetch_assoc()) {
+                                                    $u_id = $rows['u_id'];
+                                                    $p_title = $rows['prop_title'];
+                                                    $p_descr = $rows['prop_description'];
+                                                    $p_link = $rows['prop_link'];
+                                                    echo "
+                                                    <tr>
+                                                        <td>
+                                                            <a href= " . $p_link . "
+                                                            target=\"_blank\">$i</a>
+                                                        </td>
+                                                        <td>$p_title</td>
+                                                        <td>$p_descr</td>
+                                                        <td>
+                                                            <form action=\"\" method=\"post\">
+                                                                <button type=\"submit\" class=\"button\" name=\"remove_user\" value= \"" . $u_id . "\" data-value=\"" . $prop_title . "\"> Remove Internship </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    ";
+                                                    $i++;
+                                                }
+                                            ?>
 
                                         </tbody>
                                     </table>
@@ -271,14 +291,20 @@ Tip 2: you can also add an image using data-image tag
                                             <th>Comment</th>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>First comment from advisor</td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Second comment from advisor</td>
-                                            </tr>
+                                        <?php
+                                                $i = 1;
+                                                while ($rows = $comments->fetch_assoc()) {
+                                                    $u_id = $rows['u_id'];
+                                                    $comment = $rows['comment'];;
+                                                    echo "
+                                                    <tr>
+                                                        <td>$i</td>
+                                                        <td>$comment</td>
+                                                    </tr>
+                                                    ";
+                                                    $i++;
+                                                }
+                                            ?>
 
                                         </tbody>
                                     </table>

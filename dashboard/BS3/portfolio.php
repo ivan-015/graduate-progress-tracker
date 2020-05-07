@@ -1,3 +1,12 @@
+<?php 
+    session_start();
+    require_once("../../common_assets/config.php");
+
+    $internships = $conn->query("SELECT * FROM User JOIN Internships WHERE User.u_id = Internships.u_id AND User.u_email = " . "'" . $_SESSION['username'] . "'");
+    $awards = $conn->query("SELECT * FROM User JOIN Awards WHERE User.u_id = Awards.u_id AND User.u_email = " . "'" . $_SESSION['username'] . "'");
+    $conferences = $conn->query("SELECT * FROM User JOIN Conferences WHERE User.u_id = Conferences.u_id AND User.u_email = " . "'" . $_SESSION['username'] . "'");
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -71,7 +80,7 @@ Tip 2: you can also add an image using data-image tag
                         </a>
                     </li>
                     <li>
-                        <a href="documents.html">
+                        <a href="documents.php">
                             <i class="pe-7s-news-paper"></i>
                             <p>Documents</p>
                         </a>
@@ -192,7 +201,7 @@ Tip 2: you can also add an image using data-image tag
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="header">
-                                    <h4 class="title">Internships</h4> 
+                                    <h4 class="title">Internships</h4>
                                     <!-- <p class="category">Here is a subtitle for this table</p> -->
                                 </div>
                                 <div class="content table-responsive table-full-width">
@@ -205,25 +214,36 @@ Tip 2: you can also add an image using data-image tag
                                             <!-- <th>City</th> -->
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Parabeac</td>
-                                                <td>Software Developer</td>
-                                                <td>May 2019 - August 2019</td>
-                                                <!-- <td>Oud-Turnhout</td> -->
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Microsoft</td>
-                                                <td>Software Developer</td>
-                                                <td>May 2018 - August 2018</td>
-                                                <!-- <td>Oud-Turnhout</td> -->
-                                            </tr>
+                                            <?php
+                                                $i = 1;
+                                                while ($rows = $internships->fetch_assoc()) {
+                                                    $u_id = $rows['u_id'];
+                                                    $i_name = $rows['i_company'];
+                                                    $i_pos = $rows['i_position'];
+                                                    $i_date = $rows['i_date_range'];
+                                                    echo "
+                                                    <tr>
+                                                        <td>$i</td>
+                                                        <td>$i_name</td>
+                                                        <td>$i_pos</td>
+                                                        <td>$i_date</td>
+                                                        <td>
+                                                            <form action=\"\" method=\"post\">
+                                                                <button type=\"submit\" class=\"button\" name=\"remove_user\" value= \"" . $u_id . "\" data-value=\"" . $i_date . "\"> Remove Internship </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    ";
+                                                    $i++;
+                                                }
+                                            ?>
+                                            
                                         </tbody>
                                     </table>
-                                    <a type="button" href="internshipInsert.php" class="btn btn-primary">Add Internship</a>
-                                    <a type="button" href="internshipModify.php" class="btn btn-primary">Modify Internship</a>
-                                    <a type="button" href="internshipDelete.php" class="btn btn-primary">Delete Internship</a>
+                                    <a type="button" href="internshipInsert.php" class="btn btn-primary">Add
+                                        Internship</a>
+                                    <a type="button" href="internshipModify.php" class="btn btn-primary">Modify
+                                        Internship</a>
                                 </div>
                             </div>
                         </div>
@@ -236,27 +256,42 @@ Tip 2: you can also add an image using data-image tag
                                 </div>
                                 <div class="content table-responsive table-full-width">
                                     <table class="table table-hover table-striped">
+                                        
                                         <thead>
                                             <th>ID</th>
                                             <th>Award Name</th>
+                                            <th>Award Date</th>
                                             <!-- <th>Salary</th>
                                             <th>Country</th>
                                             <th>City</th> -->
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Award 1 </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Award 2</td>
-                                            </tr>
+                                        <?php
+                                                $i = 1;
+                                                while ($rows = $awards->fetch_assoc()) {
+                                                    $u_id = $rows['u_id'];
+                                                    $a_name = $rows['a_name'];
+                                                    $a_date = $rows['a_date_received'];
+                                                    echo "
+                                                    <tr>
+                                                        <td>$i</td>
+                                                        <td>$a_name</td>
+                                                        <td>$a_date</td>
+                                                        <td>
+                                                            <form action=\"\" method=\"post\">
+                                                                <button type=\"submit\" class=\"button\" name=\"remove_user\" value= \"" . $u_id . "\" data-value=\"" . $a_name . "\"> Remove Award</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    ";
+                                                    $i++;
+                                                }
+                                            ?>
+                                            
                                         </tbody>
                                     </table>
                                     <a type="button" href="awardInsert.php" class="btn btn-primary">Add Award</a>
                                     <a type="button" href="awardModify.php" class="btn btn-primary">Modify Award</a>
-                                    <a type="button" href="awardDelete.php" class="btn btn-primary">Delete Award</a>
                                 </div>
                             </div>
                         </div>
@@ -272,21 +307,37 @@ Tip 2: you can also add an image using data-image tag
                                         <thead>
                                             <th>ID</th>
                                             <th>Conference Name</th>
+                                            <th>Conference Date</th>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Conference on Data science</td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>2020 3rd International Conference on Computer Science</td>
-                                            </tr>
+
+                                        <?php
+                                                $i = 1;
+                                                while ($rows = $conferences->fetch_assoc()) {
+                                                    $u_id = $rows['u_id'];
+                                                    $c_name = $rows['c_name'];
+                                                    $c_date = $rows['c_dates_attended'];
+                                                    echo "
+                                                    <tr>
+                                                        <td>$i</td>
+                                                        <td>$c_name</td>
+                                                        <td>$c_date</td>
+                                                        <td>
+                                                            <form action=\"\" method=\"post\">
+                                                                <button type=\"submit\" class=\"button\" name=\"remove_user\" value= \"" . $u_id . "\" data-value=\"" . $c_date . "\"> Remove Conference</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    ";
+                                                    $i++;
+                                                }
+                                            ?>
                                         </tbody>
                                     </table>
-                                    <a type="button" href="conferenceInsert.php" class="btn btn-primary">Add Confrence</a>
-                                    <a type="button" href="conferenceModify.php" class="btn btn-primary">Modify Confrence</a>
-                                    <a type="button" href="conferenceDelete.php" class="btn btn-primary">Delete Confrence</a>
+                                    <a type="button" href="conferenceInsert.php" class="btn btn-primary">Add
+                                        Confrence</a>
+                                    <a type="button" href="conferenceModify.php" class="btn btn-primary">Modify
+                                        Confrence</a>
                                 </div>
                             </div>
                         </div>

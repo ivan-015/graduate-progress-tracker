@@ -9,91 +9,8 @@
 
 session_start();
 require_once ("../common_assets/config.php");
-$_SESSION['logged_in'] = false;/*
-$username = $password = $err = "";
-if($_SERVER['REQUEST_METHOD']=='POST'){
-	if(empty(trim($_POST['username']))){
-		$err = "empty username";
-	}
-	else{
-		$username = trim($_POST['username']);
-	}
+$_SESSION['logged_in'] = false;
 
-	if(empty(trim($_POST['password']))){
-		$err = "empty password";
-	}
-	else{
-		$password = trim($_POST['password']);
-	}
-
-	if(empty($err)){
-		$sql = "SELECT u_id, username, password FROM Users WHERE username = ?";
-	
-
-		if($stmt = mysqli_prepare($conn, $sql)){
-			mysqli_stmt_bind_param($stmt, "s", $param_username);
-			$param_username = $username;
-
-			if(mysqli_stmt_execute($stmt)){
-				mysqli_stmt_store_result($stmt);
-				if(mysqli_stmt_num_rows($stmt)==1){
-					mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password);
-					
-					//Check if user is Student or Admin or Faculty
-					$if_admin = 'SELECT * FROM Admin WHERE u_id = ?';
-					$stmt = mysqli_prepare($conn, $if_admin);
-					mysqli_stmt_bind_param($stmt, "s", $id);
-					if(mysqli_stmt_num_rows($stmt) == 1 ){
-						
-						if(password_verify($password, $hashed_password)){
-							session_start();
-							
-							$_SESSION['username'] = $username;
-							$_SESSION['logged_in'] = true;
-							header("Location: ../admin_dashboard/BS3/dashboard.html");
-						
-						} else $password_err = "The password you entered was not valid.";
-					}
-					//Check if user is faculty
-					$if_faculty = 'SELECT * FROM Faculty WHERE u_id = ?';
-					$stmt = mysqli_prepare($conn, $if_faculty);
-					mysqli_stmt_bind_param($stmt, "s", $id);}
-					elseif(mysqli_stmt_num_rows($stmt) == 1 ){
-					
-						//DEFAULT: Faculty goes to admin dashboard
-						if(password_verify($password, $hashed_password)){
-							session_start();
-							
-							$_SESSION['username'] = $username;
-							$_SESSION['logged_in'] = true;
-							header("Location: ../admin_dashboard/BS3/dashboard.html");
-						
-						} else $password_err = "The password you entered was not valid.";
-					}
-					//Check if user is student
-					$if_student = 'SELECT * FROM Student WHERE u_id = ?';
-					$stmt = mysqli_prepare($conn, $if_student);
-					mysqli_stmt_bind_param($stmt, "s", $id);}
-					elseif(mysqli_stmt_num_rows($stmt) == 1 ){
-							if(password_verify($password, $hashed_password)){
-								session_start();
-								
-								$_SESSION['username'] = $username;
-		                		$_SESSION['logged_in'] = true;
-        		        		header("Location: ../dashboard/BS3/dashboard.html");
-							
-							} else $password_err = "The password you entered was not valid.";
-					}  
-					else $username_err = "No account found with that username.";
-		 				//	} else echo "Oops! Something went wrong. Please try again later.";
-			
-			mysqli_stmt_close($stmt);
-        }
-    }
-
-    mysqli_close($link);
-}
-*/
 
 if (!empty($_POST)) {
     if (isset($_POST['Submit'])) {
@@ -103,30 +20,36 @@ if (!empty($_POST)) {
 		 * Hashing and Salting goes here.
 		 */
         $queryUser = "SELECT * FROM user  WHERE U_email=?" ;
-		mysqli_stmt_bind_param($queryUser, 's', $input_username);
-		mysqli_stmt_execute($queryUser);
-		$result_for_pwd = mysqli_stmt_get_result($queryUser);
-		$resultUser = $conn->query($queryUser);
+		$stmt_q = mysqli_prepare($conn, $queryUser);
+		mysqli_stmt_bind_param($stmt_q, 's', $input_username);
+		mysqli_stmt_execute($stmt_q);
+		$result_for_pwd = mysqli_stmt_get_result($stmt_q);
 
-        if ($resultUser->num_rows > 0) {
-			//$test = $resultUser->password_verify($input_password, );
-			//$if_password_correct = 
+        if ($resultUser = mysqli_fetch_assoc($result_for_pwd)) {
+
 			if(password_verify($input_password, $resultUser['u_password'])){
-				//if there is a result, that means that the user was found in the database
-				$queryAdmin = "SELECT * FROM faculty WHERE u_email='" . $input_username . "';";
-				$resultAdmin = $conn->query($queryAdmin);
-				// echo $queryAdmin;
-				if ($resultAdmin->num_rows > 0) {
+				
+				$queryAdmin = "SELECT * FROM faculty WHERE u_email=?";
+				
+				$stmt_p = mysqli_prepare($conn, $queryAdmin);
+				mysqli_stmt_bind_param($stmt_p, 's', $input_username);
+				mysqli_stmt_execute($stmt_p);
+				$result_p = mysqli_stmt_get_result($stmt_p);
+
+				if ($resultAdmin = mysqli_fetch_assoc($result_p)) {
+					session_start();
 					$_SESSION['username'] = $input_username;
 					$_SESSION['logged_in'] = true;
 					header("Location: ../admin_dashboard/BS3/dashboard.html");
 				} else {
+					session_start();
 					$_SESSION['username'] = $input_username;
 					$_SESSION['logged_in'] = true;
 					header("Location: ../dashboard/BS3/dashboard.php");
 				}
 			} else{
 				echo "Password Incorrect";
+				exit();
 			}
 
         } else {
@@ -180,20 +103,15 @@ if (!empty($_POST)) {
 						<img src="../common_assets/utep_logo.png" alt="AVATAR">
 					</span>
 
-					<div class="wrap-input100 validate-input m-t-85 m-b-35
-					<?php echo (!empty($username_err)) ? 'has-error' : ''; ?>" 
-					data-validate="Enter username">
+					<div class="wrap-input100 validate-input m-t-85 m-b-35">
 						<input class="input100" type="text" name="username">
 						<span class="focus-input100" data-placeholder="Username"></span>
-						<span class="help-block"><?php echo $username_err; ?></span>
+						
 					</div>
 
-					<div class="wrap-input100 validate-input m-b-50 
-					<?php echo (!empty($password_err)) ? 'has-error' : ''; ?>"
-					 data-validate="Enter password">
+					<div class="wrap-input100 validate-input m-b-50 ">
 						<input class="input100" type="password" name="password">
 						<span class="focus-input100" data-placeholder="Password"></span>
-						<span class="help-block"><?php echo $password_err; ?></span>
 					</div>
 
 					<div class="container-login100-form-btn">

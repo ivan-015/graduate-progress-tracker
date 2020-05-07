@@ -11,28 +11,46 @@ session_start();
 require_once ("../common_assets/config.php");
 $_SESSION['logged_in'] = false;
 
+
 if (!empty($_POST)) {
     if (isset($_POST['Submit'])) {
         $input_username = isset($_POST['username']) ? $_POST['username'] : " ";
         $input_password = isset($_POST['password']) ? $_POST['password'] : " ";
+		/*
+		 * Hashing and Salting goes here.
+		 */
+        $queryUser = "SELECT * FROM user  WHERE U_email=?" ;
+		$stmt_q = mysqli_prepare($conn, $queryUser);
+		mysqli_stmt_bind_param($stmt_q, 's', $input_username);
+		mysqli_stmt_execute($stmt_q);
+		$result_for_pwd = mysqli_stmt_get_result($stmt_q);
 
-        $queryUser = "SELECT * FROM user  WHERE U_email='" . $input_username . "' AND U_Password='" . $input_password . "';";
-        $resultUser = $conn->query($queryUser);
+        if ($resultUser = mysqli_fetch_assoc($result_for_pwd)) {
 
-        if ($resultUser->num_rows > 0) {
-            //if there is a result, that means that the user was found in the database
-            $queryAdmin = "SELECT * FROM faculty WHERE u_email='" . $input_username . "';";
-            $resultAdmin = $conn->query($queryAdmin);
-            // echo $queryAdmin;
-            if ($resultAdmin->num_rows > 0) {
-				$_SESSION['username'] = $input_username;
-                $_SESSION['logged_in'] = true;
-                header("Location: ../admin_dashboard/BS3/dashboard.php");
-            } else {
-                $_SESSION['username'] = $input_username;
-                $_SESSION['logged_in'] = true;
-                header("Location: ../dashboard/BS3/dashboard.php");
-            }
+			if(password_verify($input_password, $resultUser['u_password'])){
+				
+				$queryAdmin = "SELECT * FROM faculty WHERE u_email=?";
+				
+				$stmt_p = mysqli_prepare($conn, $queryAdmin);
+				mysqli_stmt_bind_param($stmt_p, 's', $input_username);
+				mysqli_stmt_execute($stmt_p);
+				$result_p = mysqli_stmt_get_result($stmt_p);
+
+				if ($resultAdmin = mysqli_fetch_assoc($result_p)) {
+					session_start();
+					$_SESSION['username'] = $input_username;
+					$_SESSION['logged_in'] = true;
+					header("Location: ../admin_dashboard/BS3/dashboard.html");
+				} else {
+					session_start();
+					$_SESSION['username'] = $input_username;
+					$_SESSION['logged_in'] = true;
+					header("Location: ../dashboard/BS3/dashboard.php");
+				}
+			} else{
+				echo "Password Incorrect";
+				exit();
+			}
 
         } else {
             echo "User not found.";
@@ -85,12 +103,13 @@ if (!empty($_POST)) {
 						<img src="../common_assets/utep_logo.png" alt="AVATAR">
 					</span>
 
-					<div class="wrap-input100 validate-input m-t-85 m-b-35" data-validate="Enter username">
+					<div class="wrap-input100 validate-input m-t-85 m-b-35">
 						<input class="input100" type="text" name="username">
 						<span class="focus-input100" data-placeholder="Username"></span>
+						
 					</div>
 
-					<div class="wrap-input100 validate-input m-b-50" data-validate="Enter password">
+					<div class="wrap-input100 validate-input m-b-50 ">
 						<input class="input100" type="password" name="password">
 						<span class="focus-input100" data-placeholder="Password"></span>
 					</div>
